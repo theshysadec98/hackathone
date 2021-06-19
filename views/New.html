@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p id="location1"></p>
+<p id="location2"></p>
+<form>
+    <input type="text" id="UserName">
+    <input type="text" id="Password">
+    <input type="text" id="age">
+    <button type="button" onclick="login()">Login</button>
+</form>
+<button onclick="searchAround()">Search Around</button>
+<button onclick="searchByAge()">Search By Age</button>
+
+<script>
+
+    class User {
+    username;
+    age;
+    password;
+    lastLatitude = "";
+    lastLongitude = "";
+        constructor (username, age,password,lastLatitude,lastLongitude){
+        this.username = username;
+        this.age = age;
+        this.password = password;
+        this.lastLatitude = lastLatitude;
+        this.lastLongitude = lastLongitude;
+
+        }
+   }
+    var array = [];
+    var currentlat;
+    var currentlon;
+    var name;
+    var age;
+    var password;
+    var loginUser;
+    var userid;
+    var idAround = [];
+array.push(new User("Man",5,"asd123",50,50));
+array.push(new User("Female",5,"asd123",50,50));
+array.push(new User("Female",5,"asd123",21.026657,105.77034019999999));
+array.push(new User("Female",6,"asd123",21.026657,105.77034019999999));
+console.log(array)
+
+    function login(){
+        idAround = []
+        var name = document.getElementById("UserName").value
+        var password = document.getElementById("Password").value
+        for (i = 0; i < array.length; i++){
+            if(name === array[i].username){
+            if(password === array[i].password){
+           userid=i;
+            getlocation(userid);
+            break;
+            }
+            else{alert("Wrong password")}
+            }
+        }
+        
+    }
+
+    function searchByAge(){
+        var age = document.getElementById("age").value
+         for (i = 0 ; i < array.length; i++){
+         if (i != userid){
+          if(array[i].age == age){
+          console.log(array[i])
+             alert("MatchFound")}
+             }
+            }
+    }
+
+
+    function getlocation(i) {
+    		navigator.geolocation.getCurrentPosition(position =>{
+                array[i].lastLatitude =  position.coords.latitude;
+                array[i].lastLongitude = position.coords.longitude;
+            //     loginUser.lastLatitude = currentlat;
+            //   loginUser.lastLongitude = currentlon;
+            })
+    }
+
+    //  function showPosition(position){
+    //            var currentlat = position.coords.latitude;
+    //            var currentlon = position.coords.longitude;
+    //            array[0].lastLatitude = currentlat;
+    //            array[0].lastLongitude = currentlon;
+    //            loginUser.lastLatitude = currentlat
+    //            loginUser.lastLongitude = currentlon
+    //            console.log(array)
+    //         console.log(loginUser);
+    //  }
+
+    function searchAround(){
+        idAround = []
+        for (i = 0 ; i < array.length; i++){
+            if(i != userid){
+                if(distance(array[userid].lastLatitude, array[userid].lastLongitude , array[i].lastLatitude , array[i].lastLongitude ,"K")){
+                    idAround.push(array[i])
+                }
+            }
+        }
+   for (i = 0; i<idAround.length;i++){
+       console.log(idAround[i].username + " Age: " + idAround[i].age)
+   }
+    }
+
+    function distance(lat1, lon1, lat2, lon2, unit) {
+		var radlat1 = Math.PI * lat1/180;
+		var radlat2 = Math.PI * lat2/180;
+		var theta = lon1-lon2;
+		var radtheta = Math.PI * theta/180;
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		if (dist > 1) {
+			dist = 1;
+		}
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+		dist = dist * 60 * 1.1515;
+		if (unit=="K") { dist = dist * 1.609344 }
+		if (unit=="N") { dist = dist * 0.8684 }
+		return dist < 5;
+    }
+
+    // console.log(distance(array[0].lastLatitude,array[0].lastLongitude,array[1].lastLatitude,array[1].lastLongitude,"k"))
+</script>
+</body>
+</html>
